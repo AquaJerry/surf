@@ -47,16 +47,16 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
 
 #define SETPROP(p, q) { \
         .v = (const char *[]){ "/bin/sh", "-c", \
-             "prop=\"`xprop -id $2 $0 " \
+             "prop=\"`sprop $2 $0 " \
              "| sed \"s/^$0(STRING) = \\(\\\\\"\\?\\)\\(.*\\)\\1$/\\2/\" " \
              "| xargs -0 printf %b | dmenu`\" &&" \
-             "xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
+             "sprop $2 $1 \"$prop\"", \
              p, q, winid, NULL \
         } \
 }
 #define SETPROPNOW(setproparg, newpropvalue) { \
         .v = (const char *[]){ "/bin/sh", "-c", \
-             "xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
+             "sprop $2 $1 \"$prop\"", \
              newpropvalue, ((char**)setproparg.v)[4], winid, NULL \
         } \
 }
