@@ -44,7 +44,7 @@
 #define CSETV(p, s)             [p] = (Parameter){ { .v = s }, 1 }
 #define CSETF(p, s)             [p] = (Parameter){ { .f = s }, 1 }
 
-enum { AtomFind, AtomGo, AtomUri, AtomLast };
+enum { AtomDo, AtomFind, AtomGo, AtomUri, AtomLast };
 
 enum {
 	OnDoc   = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT,
@@ -275,6 +275,7 @@ setup(void)
 		die("Can't open default display");
 
 	/* atoms */
+	atoms[AtomDo] = XInternAtom(dpy, "_SURF_DO", False);
 	atoms[AtomFind] = XInternAtom(dpy, "_SURF_FIND", False);
 	atoms[AtomGo] = XInternAtom(dpy, "_SURF_GO", False);
 	atoms[AtomUri] = XInternAtom(dpy, "_SURF_URI", False);
@@ -1073,6 +1074,38 @@ buttonreleased(GtkWidget *w, GdkEvent *e, Client *c)
 	return FALSE;
 }
 
+char*
+atomdo2mnemonic(char *atomdo)
+{
+	char *m = strtok(atomdo, " ");
+	return m ? m : atomdo;
+}
+
+int
+mnemonic2keyval(char *mnemonic)
+{
+	char m[2] = { tolower(*mnemonic) };
+	return gdk_keyval_from_name(mnemonic[1] ? mnemonic : m);
+}
+
+void
+surfdo(Client *c)
+{
+	char *d = getatom(c, AtomDo);
+	char *m = atomdo2mnemonic(d);
+	int keyval = mnemonic2keyval(m);
+	int mod = MODKEY | (isupper(*m) ? GDK_SHIFT_MASK : 0);
+
+	for (int i = 1; i < LENGTH(keys); i++) {
+		if (keys[i].keyval == keyval &&
+		    keys[i].mod == mod &&
+		    keys[i].func) {
+			keys[i].func(c, ARG(keys[i], 1 + d + strlen(m)));
+			return;
+		}
+	}
+}
+
 GdkFilterReturn
 processx(GdkXEvent *e, GdkEvent *event, gpointer d)
 {
@@ -1090,6 +1123,10 @@ processx(GdkXEvent *e, GdkEvent *event, gpointer d)
 			} else if (ev->atom == atoms[AtomGo]) {
 				a.v = getatom(c, AtomGo);
 				loaduri(c, &a);
+
+				return GDK_FILTER_REMOVE;
+			} else if (ev->atom == atoms[AtomDo]) {
+				surfdo(c);
 
 				return GDK_FILTER_REMOVE;
 			}
@@ -1110,7 +1147,7 @@ winevent(GtkWidget *w, GdkEvent *e, Client *c)
 		break;
 	case GDK_KEY_PRESS:
 		if (!curconfig[KioskMode].val.b) {
-			for (i = 0; i < LENGTH(keys); ++i) {
+			i = 0; {
 				if (gdk_keyval_to_lower(e->key.keyval) ==
 				    keys[i].keyval &&
 				    CLEANMASK(e->key.state) == keys[i].mod &&
@@ -1176,6 +1213,7 @@ showview(WebKitWebView *v, Client *c)
 		webkit_web_view_set_zoom_level(c->view,
 		                               curconfig[ZoomLevel].val.f);
 
+	setatom(c, AtomDo, "");
 	setatom(c, AtomFind, "");
 	setatom(c, AtomUri, "about:blank");
 }

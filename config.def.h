@@ -54,6 +54,12 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
              p, q, winid, NULL \
         } \
 }
+#define SETPROPNOW(setproparg, newpropvalue) { \
+        .v = (const char *[]){ "/bin/sh", "-c", \
+             "xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
+             newpropvalue, ((char**)setproparg.v)[4], winid, NULL \
+        } \
+}
 
 /* DOWNLOAD(URI, referer) */
 #define DOWNLOAD(d, r) { \
@@ -101,6 +107,7 @@ static SiteStyle styles[] = {
  */
 static Key keys[] = {
 	/* modifier              keyval          function    arg */
+	{ MODKEY,                GDK_KEY_slash,  spawn,      SETPROP("_SURF_DO", "_SURF_DO") },
 	{ MODKEY,                GDK_KEY_g,      spawn,      SETPROP("_SURF_URI", "_SURF_GO") },
 	{ MODKEY,                GDK_KEY_f,      spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
 	{ MODKEY,                GDK_KEY_slash,  spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
@@ -152,6 +159,7 @@ static Key keys[] = {
 	{ MODKEY|GDK_SHIFT_MASK, GDK_KEY_b,      toggle,     { .i = ScrollBars } },
 	{ MODKEY|GDK_SHIFT_MASK, GDK_KEY_m,      toggle,     { .i = Style } },
 };
+#define ARG(key, v) (key.func - spawn ? &key.arg : &(Arg)SETPROPNOW(key.arg, v))
 
 /* button definitions */
 /* target can be OnDoc, OnLink, OnImg, OnMedia, OnEdit, OnBar, OnSel, OnAny */
