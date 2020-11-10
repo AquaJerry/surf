@@ -1,5 +1,5 @@
 /* modifier 0 means no modifier */
-static int surfuseragent    = 1;  /* Append Surf version to default WebKit user agent */
+static int surfuseragent    = 0;  /* Append Surf version to default WebKit user agent */
 static char *fulluseragent  = ""; /* Or override the whole user agent string */
 static char *scriptfile     = "~/.surf/script.js";
 static char *styledir       = "~/.surf/styles/";
@@ -22,16 +22,16 @@ static Parameter defconfig[ParameterLast] = {
 	SETB(KioskMode,          0),
 	SETB(LoadImages,         1),
 	SETB(MediaManualPlay,    0),
-	SETB(Plugins,            1),
+	SETB(Plugins,            0),
 	SETV(PreferredLanguages, ((char *[]){ NULL })),
 	SETB(RunInFullscreen,    0),
-	SETB(ScrollBars,         1),
-	SETB(ShowIndicators,     1),
-	SETB(SiteQuirks,         1),
+	SETB(ScrollBars,         0),
+	SETB(ShowIndicators,     0),
+	SETB(SiteQuirks,         0),
 	SETB(SpellChecking,      0),
 	SETV(SpellLanguages,     ((char *[]){ "en_US", NULL })),
 	SETB(StrictSSL,          0),
-	SETB(Style,              1),
+	SETB(Style,              0),
 	SETF(ZoomLevel,          1.0),
 };
 
