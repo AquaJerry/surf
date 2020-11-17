@@ -1208,7 +1208,7 @@ createwindow(Client *c)
 	                 G_CALLBACK(destroywin), c);
 	g_signal_connect(G_OBJECT(w), "enter-notify-event",
 	                 G_CALLBACK(winevent), c);
-	g_signal_connect(G_OBJECT(w), "key-press-event",
+	g_signal_connect_after(G_OBJECT(w), "key-press-event",
 	                 G_CALLBACK(winevent), c);
 	g_signal_connect(G_OBJECT(w), "leave-notify-event",
 	                 G_CALLBACK(winevent), c);
