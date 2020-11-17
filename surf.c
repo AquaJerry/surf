@@ -1110,8 +1110,7 @@ winevent(GtkWidget *w, GdkEvent *e, Client *c)
 		updatetitle(c);
 		break;
 	case GDK_KEY_PRESS:
-		if (!curconfig[KioskMode].val.b &&
-		    !webkit_hit_test_result_context_is_editable(c->mousepos)) {
+		if (!curconfig[KioskMode].val.b) {
 			for (i = 0; i < LENGTH(keys); ++i) {
 				if (gdk_keyval_to_lower(e->key.keyval) ==
 				    keys[i].keyval &&
