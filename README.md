@@ -2,7 +2,7 @@
 
 Forked from official https://surf.suckless.org.
 
-This surf avoids key conflicts with input method by masking shortcuts as typing.
+This surf avoids key conflicts by processing keypress after operating system.
 
 
 ## Thanks
